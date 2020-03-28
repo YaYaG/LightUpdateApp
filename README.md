@@ -1,5 +1,5 @@
 更新效果：
-![image](/img/hello.gif)
+![image](/img/hello.gif = 720*1280)
 
 ####集成方式：
 1 引入 jitpack.
