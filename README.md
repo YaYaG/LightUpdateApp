@@ -1,6 +1,5 @@
 更新效果：
-
-![image](/img/gif1.webm)
+![image](/img/hello.gif)
 
 ####集成方式：
 1 引入 jitpack.
