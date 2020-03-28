@@ -1,9 +1,9 @@
 更新效果：
 <br/>
-<img src="https://github.com/YaYaG/LightUpdateApp/blob/master/img/hello.gif" width="180" height="320" align="middle" />
+<img src="https://github.com/YaYaG/LightUpdateApp/blob/master/img/hello.gif" width="270" height="480" align="middle" />
 
-####集成方式：
-1 引入 jitpack.
+# 集成方式 ：
+1 引入 jitpack：
 
 ```
 allprojects {
@@ -22,8 +22,8 @@ dependencies {
 
 ```
 
-使用方式：
-
+# 使用方式：
+兼容 Android 6.0 7.0 8.0及以上
 
 1.在res中创建xml文件夹，并创建file_paths.xml:
 
@@ -81,6 +81,9 @@ dependencies {
                         }).downloadApp(this, apkUrl, R.mipmap.ic_launcher);
 
 ```
+
+# 该库是简易版的更新库，弹框及其他需要自己去定义，获取到的apkUrl 及版本号是否更新判断后 再使用该库。
+# 觉得不错点个Star吧
 
 
 
