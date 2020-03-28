@@ -30,10 +30,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn1:
-                btn1.setEnabled(false);
                 UpdateApp.getInstance()
                         .setAutoInatall(true)//是否弹起安装apk
                         .setUpdateListener(new UpdateListener() {
+                            @Override
+                            public void start() {
+                                btn1.setEnabled(false);
+                            }
+
                             @Override
                             public void progress(int progress) {
                                 mTextView.setText("进度：" + progress);
@@ -41,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                             @Override
                             public void downFinish() {
-                                mTextView.setText("进度：完成" );
+                                mTextView.setText("进度：完成");
 
                                 //不自动安装 可以调用 该方法 安装
 //                                UpdateApp.getInstance().startInstall(MainActivity.this);
@@ -49,9 +53,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                             @Override
                             public void downFail(Throwable throwable) {
-                                mTextView.setText("失败" + throwable.getMessage() );
+                                mTextView.setText("失败" + throwable.getMessage());
                             }
-                        }).downloadApp(this, apkUrl, R.mipmap.ic_launcher);
+                        }).downloadApp(this, apkUrl, R.mipmap.ic_launcher_round, R.mipmap.ic_launcher);
                 break;
         }
     }

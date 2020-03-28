@@ -7,11 +7,13 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.yanzhenjie.permission.Action;
@@ -23,7 +25,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import androidx.annotation.DrawableRes;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.FileProvider;
 import okhttp3.Call;
@@ -42,6 +45,7 @@ public class UpdateApp {
     private UpdateListener mUpdateListener;
     private boolean autoInatall = true;
     private File mApkFile;
+    public static final int INSTALL_PERMISS_CODE = 1000;
 
     private UpdateApp() {
     }
@@ -68,13 +72,36 @@ public class UpdateApp {
         return getInstance();
     }
 
-    public void downloadApp(final Activity activity, final String apkUrl, final int logo) {
+    public void downloadApp(final Activity activity, final String apkUrl, final int smallLogo,final int logo) {
+        boolean haveInstallPermission;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            //先判断是否有安装未知来源应用的权限
+            haveInstallPermission = activity.getPackageManager().canRequestPackageInstalls();
+            if (!haveInstallPermission) {
+                //弹框提示用户手动打开
+                new AlertDialog.Builder(activity)
+                        .setTitle("安装权限")
+                        .setMessage("需要打开允许来自此来源，请去设置中开启此权限")
+                        .setNegativeButton("取消", null)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //此方法需要API>=26才能使用
+                                toInstallPermissionSettingIntent(activity);
+                            }
+                        }).show();
+                return;
+            }
+        }
         AndPermission.with(activity)
                 .permission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .onGranted(new Action() {
                     @Override
                     public void onAction(List<String> permissions) {
-                        download(activity, apkUrl, logo);
+                        if(mUpdateListener != null){
+                            mUpdateListener.start();
+                        }
+                        download(activity, apkUrl,smallLogo, logo);
                     }
                 })
                 .onDenied(new Action() {
@@ -89,7 +116,7 @@ public class UpdateApp {
                 .start();
     }
 
-    private void download(final Activity context, String apkUrl, @DrawableRes final int logo) {
+    private void download(final Activity context, String apkUrl, final int smallLogo,final int logo) {
         OkHttpClient httpClient = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(apkUrl)
@@ -122,7 +149,7 @@ public class UpdateApp {
                 builder.setContentTitle("正在更新...") //设置通知标题
                         .setSmallIcon(logo)
                         .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), logo)) //设置通知的大图标
-                        .setDefaults(Notification.DEFAULT_LIGHTS) //设置通知的提醒方式： 呼吸灯
+//                        .setDefaults(Notification.DEFAULT_LIGHTS) //设置通知的提醒方式： 呼吸灯
                         .setPriority(NotificationCompat.PRIORITY_MAX) //设置通知的优先级：最大
                         .setAutoCancel(false)//设置通知被点击一次是否自动取消
                         .setContentText("下载进度:" + "0%")
@@ -159,6 +186,14 @@ public class UpdateApp {
                         }
                     }
                     fos.flush();
+                    context.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(mUpdateListener != null){
+                                mUpdateListener.downFinish();
+                            }
+                        }
+                    });
                     builder.setContentTitle("下载完成")
                             .setContentText("点击安装")
                             .setAutoCancel(true);//设置通知被点击一次是否自动取消
@@ -219,7 +254,7 @@ public class UpdateApp {
         }
         //安装
         Intent install = new Intent(Intent.ACTION_VIEW);
-        Log.i("getApplication-",context.getApplicationContext().getPackageName());
+        Log.i("getApplication-", context.getApplicationContext().getPackageName());
         //判断是否是android 7.0及以上
         if (Build.VERSION.SDK_INT >= 24) {
             //7.0获取存储文件的uri
@@ -237,5 +272,16 @@ public class UpdateApp {
         }
 
         return install;
+    }
+
+
+    /**
+     * 开启安装未知来源权限
+     */
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void toInstallPermissionSettingIntent(Activity activity) {
+        Uri packageURI = Uri.parse("package:" + activity.getPackageName());
+        Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, packageURI);
+        activity.startActivityForResult(intent, INSTALL_PERMISS_CODE);
     }
 }

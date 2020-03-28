@@ -18,7 +18,7 @@ allprojects {
 2 添加依赖
 ```
 dependencies {
-	        implementation 'com.github.YaYaG:LightUpdateApp:1.0.0'
+	        implementation 'com.github.YaYaG:LightUpdateApp:1.0.1'
 }
 
 ```
@@ -60,26 +60,31 @@ dependencies {
                     ....
                     
                     UpdateApp.getInstance()
-                        .setAutoInatall(true)//是否弹起安装apk
-                        .setUpdateListener(new UpdateListener() {
-                            @Override
-                            public void progress(int progress) {
-                                mTextView.setText("进度：" + progress);
-                            }
-
-                            @Override
-                            public void downFinish() {
-                                mTextView.setText("进度：完成" );
-
-                                //不自动安装 可以调用 该方法 安装
-//                                UpdateApp.getInstance().startInstall(MainActivity.this);
-                            }
-
-                            @Override
-                            public void downFail(Throwable throwable) {
-                                mTextView.setText("失败" + throwable.getMessage() );
-                            }
-                        }).downloadApp(this, apkUrl, R.mipmap.ic_launcher);
+                            .setAutoInatall(true)//是否弹起安装apk
+                            .setUpdateListener(new UpdateListener() {
+                                @Override
+                                public void start() {
+                                    btn1.setEnabled(false);
+                                }
+    
+                                @Override
+                                public void progress(int progress) {
+                                    mTextView.setText("进度：" + progress);
+                                }
+    
+                                @Override
+                                public void downFinish() {
+                                    mTextView.setText("进度：完成");
+    
+                                    //不自动安装 可以调用 该方法 安装
+    //                                UpdateApp.getInstance().startInstall(MainActivity.this);
+                                }
+    
+                                @Override
+                                public void downFail(Throwable throwable) {
+                                    mTextView.setText("失败" + throwable.getMessage());
+                                }
+                            }).downloadApp(this, apkUrl, R.mipmap.ic_launcher_round, R.mipmap.ic_launcher);
 
 ```
 
