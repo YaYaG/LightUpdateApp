@@ -2,6 +2,7 @@
 <br/>
 <img src="https://raw.githubusercontent.com/YaYaG/LightUpdateApp/master/img/hello.gif" width="270" height="480" align="middle" />
 
+
 # 集成方式 ：
 1 引入 jitpack：
 
@@ -82,8 +83,9 @@ dependencies {
 
 ```
 
-# 该库是简易版的更新库，弹框及其他需要自己去定义，获取到的apkUrl 及版本号是否更新判断后 再使用该库。
-# 觉得不错点个Star吧
+
+该库是简易版的更新库，弹框及其他需要自己去定义，获取到的apkUrl 及版本号是否更新判断后 再使用该库。
+觉得不错点个Star吧
 
 
 
