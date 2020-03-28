@@ -1,6 +1,6 @@
 更新效果：
 <br/>
-<img src="https://github.com/YaYaG/LightUpdateApp/blob/master/img/hello.gif" width="270" height="480" align="middle" />
+<img src="https://raw.githubusercontent.com/YaYaG/LightUpdateApp/master/img/hello.gif" width="270" height="480" align="middle" />
 
 # 集成方式 ：
 1 引入 jitpack：
