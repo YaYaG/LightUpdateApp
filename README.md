@@ -1,6 +1,6 @@
 更新效果：
 
-![image](/img/gif1.webm =720*1280)
+![image](/img/gif1.webm)
 
 ####集成方式：
 1 引入 jitpack.
